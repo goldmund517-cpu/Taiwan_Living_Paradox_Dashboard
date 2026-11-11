@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>台灣薪資背離與人口死亡交叉趨勢戰情室</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ECharts 5.4.3 CDN 與本機端 echarts.min.js 掛載 -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script src="js/echarts.min.js"></script>
+  <!-- 自訂樣式與 45度斜角卡通半身人型淡橘底圖 -->
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body class="people-bg-pattern text-slate-900 min-h-screen flex flex-col font-sans antialiased">
+
+  <!-- 頂部導航與四大分頁（改為深海藍戰情室配色，告別單調白色頂欄） -->
+  <header class="bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 text-white border-b-2 border-amber-500/80 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center py-3.5 lg:py-0 lg:h-20 gap-3">
+        <div class="flex items-center space-x-3.5">
+          <div class="w-3 h-9 bg-amber-400 rounded-sm shadow-sm shadow-amber-400/50"></div>
+          <div>
+            <h1 class="text-lg sm:text-xl font-extrabold text-white tracking-wide">台灣薪資背離與人口結構死亡交叉戰情室</h1>
+            <p class="text-xs sm:text-sm text-amber-200/90 font-medium">Antigravity Local Intelligence • 台灣總體經濟與人口變遷 1990–2045</p>
+          </div>
+        </div>
+        <!-- 導航分頁按鈕 -->
+        <nav class="flex flex-wrap gap-2">
+          <button onclick="switchTab(0)" id="tab-btn-0" class="tab-btn px-4 py-2 text-sm sm:text-base font-bold rounded-lg text-slate-950 bg-amber-400 border border-amber-300 shadow-md transition">全景死亡交叉</button>
+          <button onclick="switchTab(1)" id="tab-btn-1" class="tab-btn px-4 py-2 text-sm sm:text-base font-semibold rounded-lg text-slate-200 hover:text-white hover:bg-slate-700/80 border border-transparent transition">薪資與購買力背離</button>
+          <button onclick="switchTab(2)" id="tab-btn-2" class="tab-btn px-4 py-2 text-sm sm:text-base font-semibold rounded-lg text-slate-200 hover:text-white hover:bg-slate-700/80 border border-transparent transition">動態年齡龍捲風</button>
+          <button onclick="switchTab(3)" id="tab-btn-3" class="tab-btn px-4 py-2 text-sm sm:text-base font-semibold rounded-lg text-slate-200 hover:text-white hover:bg-slate-700/80 border border-transparent transition">國際掉速競技場</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主內容容器 -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-7">
+
+    <!-- 頂部四大概觀指標跳動球 (Trend Macro Counters) - 字體加大、對比加深、白話直觀 -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- 卡片 1 -->
+      <div class="kpi-card bg-white p-6 rounded-2xl border-2 border-orange-200/90 shadow-md flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-base font-extrabold text-slate-800">領不到平均薪資比例</span>
+        </div>
+        <div class="mt-3 flex items-baseline flex-wrap gap-2">
+          <span class="text-4xl font-black text-rose-600 tabular-nums" id="stat-wage-ratio">68.4%</span>
+          <span class="px-2.5 py-0.5 text-xs sm:text-sm font-bold bg-rose-100 text-rose-800 rounded-md border border-rose-200">創歷史新高</span>
+        </div>
+        <p class="mt-3 text-sm font-semibold text-slate-700 leading-relaxed">
+          全台逾 <span class="text-rose-600 font-bold">68.4%</span> 上班族月薪低於平均數，多數人無感於經濟成長
+        </p>
+      </div>
+
+      <!-- 卡片 2 -->
+      <div class="kpi-card bg-white p-6 rounded-2xl border-2 border-orange-200/90 shadow-md flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-base font-extrabold text-slate-800">實質薪資 20 年總增幅</span>
+        </div>
+        <div class="mt-3 flex items-baseline flex-wrap gap-2">
+          <span class="text-4xl font-black text-slate-900 tabular-nums" id="stat-real-wage">+1.2%</span>
+          <span class="px-2.5 py-0.5 text-xs sm:text-sm font-bold bg-amber-100 text-amber-900 rounded-md border border-amber-300">20 年原地踏步</span>
+        </div>
+        <p class="mt-3 text-sm font-semibold text-slate-700 leading-relaxed">
+          扣掉便當、外食與房租漲幅後，20 年來真實購買力幾乎零成長
+        </p>
+      </div>
+
+      <!-- 卡片 3 (修正原本生硬的「張角倍數」，改為直白好懂的「房價狂飆倍數」) -->
+      <div class="kpi-card bg-white p-6 rounded-2xl border-2 border-orange-200/90 shadow-md flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-base font-extrabold text-slate-800">房價漲幅 vs 薪資差距</span>
+        </div>
+        <div class="mt-3 flex items-baseline flex-wrap gap-2">
+          <span class="text-4xl font-black text-sky-700 tabular-nums" id="stat-housing-ratio">3.8 倍</span>
+          <span class="px-2.5 py-0.5 text-xs sm:text-sm font-bold bg-sky-100 text-sky-900 rounded-md border border-sky-300">房價狂飆倍數</span>
+        </div>
+        <p class="mt-3 text-sm font-semibold text-slate-700 leading-relaxed">
+          房價漲幅高達實質薪資的 <span class="text-sky-700 font-bold">3.8 倍</span>，買房門檻遠超受薪階級負擔
+        </p>
+      </div>
+
+      <!-- 卡片 4 -->
+      <div class="kpi-card bg-white p-6 rounded-2xl border-2 border-orange-200/90 shadow-md flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-base font-extrabold text-slate-800">台灣總生育率 (TFR)</span>
+        </div>
+        <div class="mt-3 flex items-baseline flex-wrap gap-2">
+          <span class="text-4xl font-black text-rose-600 tabular-nums" id="stat-tfr">0.87</span>
+          <span class="px-2.5 py-0.5 text-xs sm:text-sm font-bold bg-rose-100 text-rose-800 rounded-md border border-rose-200">全球墊底梯隊</span>
+        </div>
+        <p class="mt-3 text-sm font-semibold text-slate-700 leading-relaxed">
+          平均每位女性一生生育不到 1 人，2020 年起出生人數少於死亡人數
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- Tab 0：全景死亡交叉 (The Grand Cross) -->
+    <!-- ========================================== -->
+    <section id="tab-0" class="tab-content active space-y-6">
+      <div class="bg-white p-6 sm:p-7 rounded-2xl border-2 border-orange-200/80 shadow-md">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-5 gap-3">
+          <div>
+            <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">房價攻頂 ✕ 實質薪資躺平 ✕ 出生人口崩跌（三大曲線終局碰撞）</h2>
+            <p class="text-sm sm:text-base font-medium text-slate-600 mt-1">基準年化標準化走勢（2000–2025 年）• 標記 2020 自然人口負增長「死亡交叉點」</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-4 text-sm sm:text-base font-bold bg-orange-50/90 px-4 py-2 rounded-xl border border-orange-200">
+            <span class="inline-flex items-center text-rose-700"><span class="w-4 h-1 bg-rose-500 mr-2 rounded"></span>實質成屋房價指數 (飆升)</span>
+            <span class="inline-flex items-center text-sky-800"><span class="w-4 h-1 bg-sky-600 mr-2 rounded"></span>實質中位薪資 (躺平)</span>
+            <span class="inline-flex items-center text-slate-700"><span class="w-4 h-1 bg-slate-600 mr-2 rounded"></span>年出生人數 (滑落)</span>
+          </div>
+        </div>
+        <div id="chart-grand-cross" class="w-full h-[440px]"></div>
+      </div>
+
+      <!-- 趨勢白話導讀卡 (改為深色高對比戰情解讀卡，不再與底圖撞色) -->
+      <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 text-white border-l-8 border-amber-400 p-6 rounded-r-2xl shadow-lg">
+        <h3 class="text-base sm:text-lg font-extrabold text-amber-300 mb-2">🎯 宏觀趨勢解讀：高房價與低薪資夾擊下，年輕世代「不婚不生」的終極反應</h3>
+        <p class="text-sm sm:text-base text-slate-100 leading-relaxed font-normal">
+          過去二十五年間，台灣實質成屋房價指數大漲逾 <span class="text-amber-300 font-bold">218%</span>（房價水準為實質薪資的 <span class="text-amber-300 font-bold">3.8 倍</span>），但扣除物價通膨後的實質薪資中位數累積漲幅卻只有微弱的 <span class="text-sky-300 font-bold">+1.2%</span>。當青年世代的收入被高昂房價、房租與日常生活開銷壓縮殆盡，最直接的生存防禦就是推遲結婚、放棄生育。2020 年台灣正式跨入「出生人數低於死亡人數」的人口死亡交叉，每年新生兒由 2000 年的 30.5 萬人一路崩跌至 2024 年的 13.4 萬人。
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- Tab 1：薪資與購買力大背離 (Salary Disconnect) -->
+    <!-- ========================================== -->
+    <section id="tab-1" class="tab-content space-y-6">
+      <div class="bg-white p-6 sm:p-7 rounded-2xl border-2 border-orange-200/80 shadow-md">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
+          <div>
+            <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">名目平均薪資 vs 中位數薪資差距面積圖 ✕ 實質購買力平減線</h2>
+            <p class="text-sm sm:text-base font-medium text-slate-600 mt-1">2005–2025 台灣受僱員工薪資分布演變 • 扣除 CPI 物價後的真實購買力走勢</p>
+          </div>
+          <span class="text-sm sm:text-base bg-rose-100 text-rose-800 border-2 border-rose-300 px-3.5 py-1.5 rounded-full font-extrabold">淡紅陰影夾層：體感貧窮擴大區</span>
+        </div>
+        <div id="chart-wage-disconnect" class="w-full h-[440px]"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-slate-900 text-white p-6 rounded-2xl border-l-8 border-rose-500 shadow-md">
+          <h4 class="font-extrabold text-amber-300 text-base sm:text-lg mb-2">💡 為何大家感覺越來越窮？（體感貧窮區擴大）</h4>
+          <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+            新聞發布的「名目平均薪資」持續創新高（突破 5.9 萬元），其實是被極少數半導體與高階科技業分紅拉高的算術平均。代表中間一般人的「薪資中位數」佔平均數比例從早期的 86% 跌破至 <span class="text-rose-400 font-bold">68.4%</span>，代表全台有超過三分之二的勞工領不到平均薪資，兩條線開口越來越大，形成明顯的「體感貧窮區」。
+          </p>
+        </div>
+        <div class="bg-slate-900 text-white p-6 rounded-2xl border-l-8 border-sky-400 shadow-md">
+          <h4 class="font-extrabold text-sky-300 text-base sm:text-lg mb-2">🍱 扣除物價 (CPI) 後的實質購買力平減線</h4>
+          <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+            雖然帳面上的中位數月薪從 2005 年的 3.4 萬元緩慢增加到 4.46 萬元，但扣掉便當、外食費（年增 4%~6%）與房租不斷上漲的物價指數後，綠色虛線「扣除 CPI 實質購買力平減線」長期卡在 <span class="text-sky-300 font-bold">3.6 萬～3.7 萬元</span>，加薪幅度完全被通膨吃光。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- Tab 2：動態年齡龍捲風 (Dynamic Population Tornado) -->
+    <!-- ========================================== -->
+    <section id="tab-2" class="tab-content space-y-6">
+      <div class="bg-white p-6 sm:p-7 rounded-2xl border-2 border-orange-200/80 shadow-md">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 gap-3">
+          <div>
+            <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">人口年齡結構動態演進（雙向龍捲風金字塔 1990–2045）</h2>
+            <p class="text-sm sm:text-base font-medium text-slate-600 mt-1">點擊右方或下方播放鍵，觀察 1990 年穩固梯形如何隨時間扭曲為 2045 年懸空倒三角龍捲風</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <button id="btn-tornado-play" onclick="toggleTornadoPlay()" class="inline-flex items-center px-4 py-2 text-sm sm:text-base font-bold rounded-xl bg-sky-600 text-white hover:bg-sky-700 transition shadow-md">
+              ▶ 自動播放演進
+            </button>
+            <div class="text-sm sm:text-base text-slate-800 bg-orange-50 px-4 py-2 rounded-xl border-2 border-orange-200 font-semibold">
+              當前時間軸：<span id="current-timeline-year" class="font-extrabold text-sky-700">2025 年</span>
+              <span class="mx-2 text-slate-400">|</span>
+              年齡中位數：<span id="current-median-age" class="font-extrabold text-rose-600">44.8 歲</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="chart-population-tornado" class="w-full h-[520px]"></div>
+      </div>
+
+      <div class="bg-slate-900 text-white p-6 rounded-2xl border-t-4 border-amber-400 shadow-lg">
+        <h4 class="font-extrabold text-amber-300 text-base sm:text-lg mb-4">🌪️ 人口金字塔塌陷的四大關鍵階段：</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 text-sm sm:text-base text-slate-100">
+          <div class="border-l-4 border-emerald-400 pl-3.5">
+            <span class="font-extrabold text-emerald-300 block mb-1">1990 年：穩固正金字塔（中位數 27 歲）</span>
+            底座飽滿、幼年人口（0–14 歲）佔比高達 27%，充沛的年輕勞動力支撐台灣經濟高速起飛。
+          </div>
+          <div class="border-l-4 border-sky-400 pl-3.5">
+            <span class="font-extrabold text-sky-300 block mb-1">2010 年：中階膨脹（中位數 37 歲）</span>
+            青壯年勞動人口集中於 30–49 歲中段，但少子化已使 0–14 歲底部明顯向內縮減。
+          </div>
+          <div class="border-l-4 border-amber-400 pl-3.5">
+            <span class="font-extrabold text-amber-300 block mb-1">2025 年：洋蔥型擠壓（中位數 44.8 歲）</span>
+            戰後嬰兒潮全數步入 65 歲以上超高齡社會，腰身肥大、底座劇烈凹陷，年齡中位數逼近 45 歲。
+          </div>
+          <div class="border-l-4 border-rose-400 pl-3.5">
+            <span class="font-extrabold text-rose-300 block mb-1">2045 推估：老化龍捲風（中位數 57.1 歲）</span>
+            老年人口佔比逼近 37%，底部幾近掏空、呈現頭重腳輕的「懸空倒三角龍捲風」，青壯撫養壓力達臨界點。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- Tab 3：國際掉速競技場 (Race to the Bottom) -->
+    <!-- ========================================== -->
+    <section id="tab-3" class="tab-content space-y-6">
+      <div class="bg-white p-6 sm:p-7 rounded-2xl border-2 border-orange-200/80 shadow-md">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
+          <div>
+            <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">東亞掉速競技場：8 國/地區總生育率 (TFR) 墜落對比 (2000–2025)</h2>
+            <p class="text-sm sm:text-base font-medium text-slate-600 mt-1">亞洲四小龍（台灣、韓國、新加坡、香港）+ 日本、中國大陸、美國、OECD 基準對照</p>
+          </div>
+          <span class="text-sm sm:text-base text-rose-800 bg-rose-100 border-2 border-rose-300 px-3.5 py-1.5 rounded-full font-extrabold">台灣與韓國呈「垂直自由落體」掉速</span>
+        </div>
+        <div id="chart-global-tfr" class="w-full h-[440px]"></div>
+      </div>
+
+      <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-rose-950 text-white border-l-8 border-rose-500 p-6 rounded-r-2xl shadow-lg">
+        <h3 class="text-base sm:text-lg font-extrabold text-amber-300 mb-2">📊 國際數據洞察：東亞高房價與高工時內捲 vs 西方人口韌性</h3>
+        <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+          日本雖然最早進入少子高齡社會，但其總生育率在過去二十年長期穩定於 <span class="text-amber-300 font-bold">1.20～1.45</span> 之間，並未發生斷崖式崩跌。反觀台灣與南韓，在短短二十年間生育率直接腰斬，分別墜入 <span class="text-rose-400 font-bold">0.87</span> 與 <span class="text-rose-400 font-bold">0.72</span> 的全球墊底極端值。相較於美國（維持在 1.62～2.06）與新加坡（靠公營組屋制度保障成家居住，維持在 0.97～1.26），台灣失控的居住成本與停滯的實質薪資，對年輕世代成家生子造成了最強烈的擠出效應。
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 頁尾 -->
+  <footer class="bg-slate-900 text-slate-300 border-t border-slate-700 py-5 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center text-sm font-medium">
+      Antigravity Engine • Local SQLite Backend (<code class="text-amber-300">tw_macro_demographics.db</code>) • 台灣行政院主計總處、內政部戶政司與國發會推估數據對齊
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

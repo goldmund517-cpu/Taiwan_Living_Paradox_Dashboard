@@ -1,0 +1,59 @@
+/* ==========================================================================
+   custom.css - 台灣薪資背離與人口死亡交叉趨勢戰情室
+   視覺基調：
+   1. 頂部深邃戰情室導覽列 (Deep Navy Slate Header)
+   2. 暖調淡橘色背景 + 45度斜角卡通半身人型剪影 (頭+肩膀+連身手臂輪廓)
+   3. 高對比大字體卡片與深色宏觀洞察導讀卡
+   ========================================================================== */
+
+:root {
+  --bg-warm-orange: #fff4e6;
+  --bg-warm-orange-deep: #ffe8cc;
+  --accent-sky: #0284c7;
+  --accent-rose: #e11d48;
+  --accent-amber: #d97706;
+}
+
+/* 分頁顯示控制與平滑淡入轉場 */
+.tab-content {
+  display: none;
+  animation: fadeInTab 0.28s ease-out;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeInTab {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 
+ * 45度斜角卡通感半身人型剪影背景 (Warm Soft Orange + 45-deg Tilted Bust Silhouette)
+ * 包含：圓潤人頭、頸部、寬肩膀與連著身體自然垂至肩胸處的手臂線條，打 45 度斜角陣列
+ */
+.people-bg-pattern {
+  background-color: #fff3e0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23ea580c' fill-opacity='0.085' stroke='%23c2410c' stroke-opacity='0.06' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate(38, 38) rotate(-45)'%3E%3Ccircle cx='0' cy='-16' r='9.5'/%3E%3Crect x='-3.5' y='-7' width='7' height='5' rx='2'/%3E%3Cpath d='M-19 14 C-19 1 -13 -4 0 -4 C13 -4 19 1 19 14 L14 16 L12 5 L10 16 L-10 16 L-12 5 L-14 16 Z'/%3E%3C/g%3E%3Cg transform='translate(98, 98) rotate(-45)'%3E%3Ccircle cx='0' cy='-16' r='9.5'/%3E%3Crect x='-3.5' y='-7' width='7' height='5' rx='2'/%3E%3Cpath d='M-19 14 C-19 1 -13 -4 0 -4 C13 -4 19 1 19 14 L14 16 L12 5 L10 16 L-10 16 L-12 5 L-14 16 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%);
+  background-attachment: fixed;
+}
+
+/* 頂部 KPI 卡片懸浮微互動 */
+.kpi-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -6px rgba(154, 52, 18, 0.12);
+  border-color: #fdba74;
+}
